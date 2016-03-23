@@ -11,11 +11,39 @@ public class MainActivity extends AppCompatActivity {
 
     private  int seconds=0;
     private  boolean running=false;
+    private  boolean wasRunning=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(savedInstanceState!=null)
+        {
+            seconds=savedInstanceState.getInt("seconds");
+            running=savedInstanceState.getBoolean("running");
+            wasRunning=savedInstanceState.getBoolean("wasRunning");
+        }
         runStopWatch();
+    }
+    //stops stopwatch when app loose foucs
+    @Override
+    protected void onPause() {
+        super.onPause();
+        wasRunning=running;
+        running=false;
+    }
+    //starts stopwatch if was preeviously running before pause when app gains focus
+    @Override
+    protected void onResume() {
+        super.onResume();
+        running=wasRunning;
+    }
+    //saves stopwatch state(on/off + time) when activity gets destroy due to orientation  or screen size change
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("seconds", seconds);
+        outState.putBoolean("running",running);
+        outState.putBoolean("wasRunning",wasRunning);
     }
 
     private void runStopWatch()
